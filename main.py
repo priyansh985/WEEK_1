@@ -1,6 +1,6 @@
 import streamlit as st
 import numpy as np
-# Removed unused pandas import
+import pandas as pd
 import pickle
 
 # Load the model and scaler
@@ -34,12 +34,13 @@ with col2:
 K = st.number_input("Potassium (K) content in soil", min_value=0.0, max_value=205.0, value=20.0, step=1.0)
 
 # Button to get recommendations
+# Button to get recommendations
 if st.button("Recommend Crop"):
     try:
-        # Prepare the input data
-        scaled_input = scaler.transform(np.array([[temperature, humidity, pH, rainfall]]))
-        non_scaled_input = np.array([[N, P, K]])
-        final_data = np.concatenate([scaled_input, non_scaled_input], axis=1)
+        # Prepare the input data with feature names
+        input_data = pd.DataFrame([[temperature, humidity, pH, rainfall]], columns=['temperature', 'humidity', 'ph', 'rainfall'])
+        scaled_features = scaler.transform(input_data)
+        final_data = np.hstack([scaled_features, [[N, P, K]]])
         
         # Log final data shape
         st.write("Final Data Shape:", final_data.shape)
